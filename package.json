@@ -1,5 +1,5 @@
 {
-  "name": "crops-management-be",
+  "name": "node-starter-template",
   "version": "1.0.0",
   "description": "Backend for Crops Management System",
   "main": "dist/index.js",
