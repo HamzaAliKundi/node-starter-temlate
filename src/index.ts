@@ -12,7 +12,7 @@ connectDB();
 const app: Express = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'https://pet-security-tag-dashboard.vercel.app'],
   credentials: true
 }));
 app.use(helmet());
