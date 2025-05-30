@@ -23,7 +23,7 @@ const sendVerificationEmail = async (email, name, token) => {
     const verificationUrl = `${env_1.env.FRONTEND_URL}/verify-email?token=${token}`;
     const html = (0, emailtemplate_1.verificationEmailTemplate)({ name, verificationUrl });
     await transporter.sendMail({
-        from: `"Crops Management" <${env_1.env.SMTP_USER}>`,
+        from: `"Pet security" <${env_1.env.SMTP_USER}>`,
         to: email,
         subject: 'Verify Your Email',
         html
@@ -34,7 +34,7 @@ const sendPasswordResetEmail = async (email, name, token) => {
     const resetUrl = `${env_1.env.FRONTEND_URL}/reset-password?token=${token}`;
     const html = (0, emailtemplate_1.resetPasswordTemplate)({ name, resetUrl });
     await transporter.sendMail({
-        from: `"Crops Management" <${env_1.env.SMTP_USER}>`,
+        from: `"Pet security" <${env_1.env.SMTP_USER}>`,
         to: email,
         subject: 'Reset Your Password',
         html

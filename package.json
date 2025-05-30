@@ -1,7 +1,7 @@
 {
   "name": "node-starter-template",
   "version": "1.0.0",
-  "description": "Backend for Crops Management System",
+  "description": "Backend for node",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",

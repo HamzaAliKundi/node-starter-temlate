@@ -20,7 +20,7 @@ export const sendVerificationEmail = async (email: string, name: string, token: 
   const html = verificationEmailTemplate({ name, verificationUrl });
 
   await transporter.sendMail({
-    from: `"Node starter" <${env.SMTP_USER}>`,
+    from: `"Pet security" <${env.SMTP_USER}>`,
     to: email,
     subject: 'Verify Your Email',
     html
@@ -32,7 +32,7 @@ export const sendPasswordResetEmail = async (email: string, name: string, token:
   const html = resetPasswordTemplate({ name, resetUrl });
 
   await transporter.sendMail({
-    from: `"Node starter" <${env.SMTP_USER}>`,
+    from: `"Pet security" <${env.SMTP_USER}>`,
     to: email,
     subject: 'Reset Your Password',
     html
