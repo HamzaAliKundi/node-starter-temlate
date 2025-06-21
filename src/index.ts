@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import routes from './routes';
@@ -10,29 +11,10 @@ connectDB();
 
 const app: Express = express();
 
-// Manual CORS middleware
-app.use((req, res, next) => {
-  const allowedOrigins = [
-    'http://localhost:5173',
-    'https://pet-security-tag-dashboard.vercel.app',
-    'https://pet-security-admin.vercel.app'
-  ];
-  const origin = req.headers.origin;
-
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
+// ✅ Allow all origins using cors (NO credentials)
+app.use(cors({
+  origin: '*' // Allow all origins
+}));
 
 app.use(helmet());
 app.use(morgan('dev'));
@@ -44,4 +26,4 @@ app.use('/api/v1', routes);
 
 app.use(errorHandler);
 
-app.listen(env.PORT, () => console.log(`Server is running on port ${env.PORT}`));
+app.listen(env.PORT, () => console.log(`🚀 Server running on port ${env.PORT}`));
