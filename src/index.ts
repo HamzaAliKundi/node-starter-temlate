@@ -1,5 +1,4 @@
 import express, { Express } from 'express';
-import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import routes from './routes';
@@ -11,12 +10,29 @@ connectDB();
 
 const app: Express = express();
 
-app.use(cors({
-  origin: (origin, callback) => {
-    callback(null, true); // Allow all origins (not safe for production)
-  },
-  credentials: true
-}));
+// Manual CORS middleware
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    'http://localhost:5173',
+    'https://pet-security-tag-dashboard.vercel.app',
+    'https://pet-security-admin.vercel.app'
+  ];
+  const origin = req.headers.origin;
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 app.use(helmet());
 app.use(morgan('dev'));
