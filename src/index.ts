@@ -10,11 +10,9 @@ import { env } from './config/env';
 connectDB();
 
 const app: Express = express();
-
+console.log("hello")
 // ✅ Allow all origins using cors (NO credentials)
-app.use(cors({
-  origin: '*' // Allow all origins
-}));
+app.use(cors(*);
 
 app.use(helmet());
 app.use(morgan('dev'));
