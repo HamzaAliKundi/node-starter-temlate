@@ -12,9 +12,12 @@ connectDB();
 const app: Express = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://pet-security-tag-dashboard.vercel.app', 'https://pet-security-admin.vercel.app'],
+  origin: (origin, callback) => {
+    callback(null, true); // Allow all origins (not safe for production)
+  },
   credentials: true
 }));
+
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
