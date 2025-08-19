@@ -11,7 +11,7 @@ const express_async_handler_1 = __importDefault(require("express-async-handler")
 const emailService_1 = require("../utils/emailService");
 const jwt_1 = require("../utils/jwt");
 exports.register = (0, express_async_handler_1.default)(async (req, res) => {
-    const { email, password, name } = req.body;
+    const { email, password, name, isEmailVerified } = req.body;
     const existingUser = await User_1.default.findOne({ email });
     if (existingUser)
         res.status(400).json({ message: 'User already exists' });
@@ -21,7 +21,7 @@ exports.register = (0, express_async_handler_1.default)(async (req, res) => {
         email,
         password: hashedPassword,
         name,
-        isEmailVerified: false
+        isEmailVerified: isEmailVerified || false
     });
     const token = (0, jwt_1.generateVerificationToken)(user);
     await (0, emailService_1.sendVerificationEmail)(email, name, token);

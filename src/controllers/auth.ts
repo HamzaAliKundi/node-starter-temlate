@@ -7,7 +7,7 @@ import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/emailSer
 import { generateForgotPasswordToken, generateToken, generateVerificationToken, verifyToken } from '../utils/jwt';
 
 export const register = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { email, password, name } = req.body;
+  const { email, password, name, isEmailVerified } = req.body;
 
   const existingUser = await User.findOne({ email });
   if (existingUser) res.status(400).json({ message: 'User already exists' });
@@ -19,7 +19,7 @@ export const register = asyncHandler(async (req: Request, res: Response): Promis
     email,
     password: hashedPassword,
     name,
-    isEmailVerified: false
+    isEmailVerified: isEmailVerified || false
   });
 
   const token = generateVerificationToken(user);
