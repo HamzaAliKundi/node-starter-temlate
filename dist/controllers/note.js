@@ -37,10 +37,16 @@ exports.createNote = (0, express_async_handler_1.default)(async (req, res) => {
 });
 exports.getNotes = (0, express_async_handler_1.default)(async (req, res) => {
     const userId = req.user._id;
-    const { category } = req.query;
+    const { category, search } = req.query;
     let query = { user: userId };
     if (category && category !== 'all') {
         query = { ...query, category: category };
+    }
+    if (search && search.toString().trim() !== '') {
+        query = {
+            ...query,
+            title: { $regex: search.toString(), $options: 'i' }
+        };
     }
     const notes = await Note_1.default.find(query).sort({ createdAt: -1 });
     res.status(200).json({

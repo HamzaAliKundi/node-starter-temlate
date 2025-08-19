@@ -37,12 +37,19 @@ export const createNote = asyncHandler(async (req: Request, res: Response): Prom
 
 export const getNotes = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const userId = req.user._id;
-  const { category } = req.query;
+  const { category, search } = req.query;
 
   let query: any = { user: userId };
   
   if (category && category !== 'all') {
     query = { ...query, category: category as string };
+  }
+
+  if (search && search.toString().trim() !== '') {
+    query = { 
+      ...query, 
+      title: { $regex: search.toString(), $options: 'i' }
+    };
   }
 
   const notes = await Note.find(query).sort({ createdAt: -1 });
