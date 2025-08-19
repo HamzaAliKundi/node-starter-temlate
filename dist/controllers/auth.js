@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetPassword = exports.sendForgotPasswordEmail = exports.verifyEmail = exports.login = exports.register = void 0;
+exports.getMe = exports.resetPassword = exports.sendForgotPasswordEmail = exports.verifyEmail = exports.login = exports.register = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const User_1 = __importDefault(require("../models/User"));
 const env_1 = require("../config/env");
@@ -128,4 +128,16 @@ exports.resetPassword = (0, express_async_handler_1.default)(async (req, res) =>
         res.status(400).json({ message: 'Token expired or invalid' });
         return;
     }
+});
+exports.getMe = (0, express_async_handler_1.default)(async (req, res) => {
+    const user = await User_1.default.findById(req.user._id);
+    if (!user) {
+        res.status(400).json({ message: 'User not found' });
+        return;
+    }
+    res.status(200).json({
+        message: 'User fetched successfully',
+        status: 200,
+        user
+    });
 });
