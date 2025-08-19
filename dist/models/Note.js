@@ -35,10 +35,28 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const NoteSchema = new mongoose_1.Schema({
-    content: {
+    title: {
         type: String,
         required: true,
         trim: true
+    },
+    completed: {
+        type: Boolean,
+        default: false
+    },
+    category: {
+        type: String,
+        enum: ['work', 'personal', 'health'],
+        default: 'personal'
+    },
+    priority: {
+        type: String,
+        enum: ['high', 'medium', 'low'],
+        default: 'medium'
+    },
+    date: {
+        type: String,
+        required: true
     },
     user: {
         type: mongoose_1.Schema.Types.ObjectId,

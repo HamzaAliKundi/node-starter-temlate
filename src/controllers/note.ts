@@ -3,25 +3,32 @@ import asyncHandler from 'express-async-handler';
 import Note from '../models/Note';
 
 export const createNote = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { content } = req.body;
+  const { title, category, priority, date } = req.body;
   const userId = req.user._id;
 
-  if (!content || content.trim() === '') {
-    res.status(400).json({ message: 'Note content is required' });
+  if (!title || title.trim() === '') {
+    res.status(400).json({ message: 'Todo title is required' });
     return;
   }
 
   const note = await Note.create({
-    content: content.trim(),
+    title: title.trim(),
+    category: category || 'personal',
+    priority: priority || 'medium',
+    date: date || new Date().toISOString().split('T')[0],
     user: userId
   });
 
   res.status(201).json({
-    message: 'Note created successfully',
+    message: 'Todo created successfully',
     status: 201,
     note: {
       _id: note._id,
-      content: note.content,
+      title: note.title,
+      completed: note.completed,
+      category: note.category,
+      priority: note.priority,
+      date: note.date,
       createdAt: note.createdAt,
       updatedAt: note.updatedAt
     }
@@ -30,11 +37,18 @@ export const createNote = asyncHandler(async (req: Request, res: Response): Prom
 
 export const getNotes = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const userId = req.user._id;
+  const { category } = req.query;
 
-  const notes = await Note.find({ user: userId }).sort({ createdAt: -1 });
+  let query: any = { user: userId };
+  
+  if (category && category !== 'all') {
+    query = { ...query, category: category as string };
+  }
+
+  const notes = await Note.find(query).sort({ createdAt: -1 });
 
   res.status(200).json({
-    message: 'Notes retrieved successfully',
+    message: 'Todos retrieved successfully',
     status: 200,
     count: notes.length,
     notes
@@ -48,12 +62,12 @@ export const getNoteById = asyncHandler(async (req: Request, res: Response): Pro
   const note = await Note.findOne({ _id: id, user: userId });
 
   if (!note) {
-    res.status(404).json({ message: 'Note not found' });
+    res.status(404).json({ message: 'Todo not found' });
     return;
   }
 
   res.status(200).json({
-    message: 'Note retrieved successfully',
+    message: 'Todo retrieved successfully',
     status: 200,
     note
   });
@@ -61,30 +75,82 @@ export const getNoteById = asyncHandler(async (req: Request, res: Response): Pro
 
 export const updateNote = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
-  const { content } = req.body;
+  const { title, completed, category, priority, date } = req.body;
   const userId = req.user._id;
-
-  if (!content || content.trim() === '') {
-    res.status(400).json({ message: 'Note content is required' });
-    return;
-  }
 
   const note = await Note.findOne({ _id: id, user: userId });
 
   if (!note) {
-    res.status(404).json({ message: 'Note not found' });
+    res.status(404).json({ message: 'Todo not found' });
     return;
   }
 
-  note.content = content.trim();
+  if (title !== undefined) {
+    if (!title || title.trim() === '') {
+      res.status(400).json({ message: 'Todo title is required' });
+      return;
+    }
+    note.title = title.trim();
+  }
+
+  if (completed !== undefined) {
+    note.completed = completed;
+  }
+
+  if (category !== undefined) {
+    note.category = category;
+  }
+
+  if (priority !== undefined) {
+    note.priority = priority;
+  }
+
+  if (date !== undefined) {
+    note.date = date;
+  }
+
   await note.save();
 
   res.status(200).json({
-    message: 'Note updated successfully',
+    message: 'Todo updated successfully',
     status: 200,
     note: {
       _id: note._id,
-      content: note.content,
+      title: note.title,
+      completed: note.completed,
+      category: note.category,
+      priority: note.priority,
+      date: note.date,
+      createdAt: note.createdAt,
+      updatedAt: note.updatedAt
+    }
+  });
+});
+
+export const toggleTodo = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const userId = req.user._id;
+
+  const note = await Note.findOne({ _id: id, user: userId });
+
+  if (!note) {
+    res.status(404).json({ message: 'Todo not found' });
+    return;
+  }
+
+  note.completed = !note.completed;
+  await note.save();
+
+  res.status(200).json({
+    message: 'Todo toggled successfully',
+    status: 200,
+    note: {
+      _id: note._id,
+      title: note.title,
+      completed: note.completed,
+      category: note.category,
+      priority: note.priority,
+      date: note.date,
       createdAt: note.createdAt,
       updatedAt: note.updatedAt
     }
@@ -98,14 +164,14 @@ export const deleteNote = asyncHandler(async (req: Request, res: Response): Prom
   const note = await Note.findOne({ _id: id, user: userId });
 
   if (!note) {
-    res.status(404).json({ message: 'Note not found' });
+    res.status(404).json({ message: 'Todo not found' });
     return;
   }
 
   await Note.findByIdAndDelete(id);
 
   res.status(200).json({
-    message: 'Note deleted successfully',
+    message: 'Todo deleted successfully',
     status: 200
   });
 });

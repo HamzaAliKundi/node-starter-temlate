@@ -8,5 +8,6 @@ router.post('/', auth_1.authMiddleware, note_1.createNote);
 router.get('/', auth_1.authMiddleware, note_1.getNotes);
 router.get('/:id', auth_1.authMiddleware, note_1.getNoteById);
 router.put('/:id', auth_1.authMiddleware, note_1.updateNote);
+router.patch('/:id/toggle', auth_1.authMiddleware, note_1.toggleTodo);
 router.delete('/:id', auth_1.authMiddleware, note_1.deleteNote);
 exports.default = router;
